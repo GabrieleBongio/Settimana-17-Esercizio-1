@@ -1,0 +1,40 @@
+﻿@model List<Settimana_17_Esercizio_1.Models.Dipendenti>
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="overflow-hidden" style="height: 20vh">
+    <img alt="cantiere" src="https://www.immobiliare.it/news/app/uploads/2022/09/Cantiere.jpeg" />
+</div>
+
+<div class="d-flex my-3">
+<h2>Lista Dipendenti:</h2>
+<a class="btn btn-outline-primary ms-auto" href="/Dipendenti/Create">Crea Nuovo</a>
+</div>
+
+<div>
+    @foreach (Settimana_17_Esercizio_1.Models.Dipendenti d in Model)
+    {
+        <div class="border-top border-2 px-3">
+            <p class="fs-4 mt-3 fw-light">
+                <span>@d.Nome</span>
+                <span>@d.Cognome</span>
+            </p>
+            <p class="m-0">Indirizzo: @d.Indirizzo</p>
+            <p class="m-0">CF: @d.CF</p>
+            <p class="m-0">
+                Coniugato:
+                @if (d.Coniugato)
+                {
+                    <span>Si</span>;
+                }
+                else
+                {
+                    <span>No</span>
+                }
+            </p>
+            <p class="m-0">Numero di Figli: @d.NFigli</p>
+            <p>Mansione: @d.Mansione</p>
+        </div>
+    }
+</div>
