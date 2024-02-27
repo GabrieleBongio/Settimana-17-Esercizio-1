@@ -1,0 +1,45 @@
+﻿@model List<Settimana_17_Esercizio_1.Models.Pagamenti>
+@{
+    ViewBag.Title = "Index";
+}
+
+<a class="btn btn-outline-success ms-auto" href="/Dipendenti/Index">Ritorna ai Dipendenti</a>
+
+<div class="d-flex my-3">
+    <h2>Tabella Pagamenti:</h2>
+    <a class="btn btn-outline-primary ms-auto" href="/Pagamenti/Create">Crea Nuovo</a>
+</div>
+
+<div>
+    <div class="border-top border-2 px-3 row">
+        <div class="col-3"><p class="m-0 fs-5 fw-semibold">Dipendente:</p></div>
+        <div class="col-3"><p class="m-0 fs-5 fw-semibold">Periodo:</p></div>
+        <div class="col-3"><p class="m-0 fs-5 fw-semibold">Ammontare:</p></div>
+        <div class="col-3">
+            <p class="m-0 fs-5 fw-semibold">
+                Tipo:
+            </p>
+        </div>
+    </div>
+    @foreach (Settimana_17_Esercizio_1.Models.Pagamenti p in Model)
+    {
+        <div class="border-top border-2 px-3 row">
+            <div class="col-3"><p class="m-0">@p.Dipendente</p></div>
+            <div class="col-3"><p class="m-0">@p.Periodo_Pagamento</p></div>
+            <div class="col-3"><p class="m-0">@p.Ammontare €</p></div>
+            <div class="col-3">
+                <p class="m-0">
+
+                    @if (p.Tipo == 'A')
+                    {
+                        <span>Acconto</span>
+                    }
+                    else
+                    {
+                        <span>Stipendio</span>
+                    }
+                </p>
+            </div>
+        </div>
+    }
+</div>

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -13,50 +15,42 @@ namespace Settimana_17_Esercizio_1.Controllers
         public ActionResult Index()
         {
             List<Dipendenti> listaDipendenti = new List<Dipendenti>();
-            listaDipendenti.Add(
-                new Dipendenti(
-                    "Gabriele",
-                    "Bongio",
-                    "Via dei Sedini 11, Morbegno",
-                    "BNGGRL03A05I829R",
-                    false,
-                    0,
-                    "muratore"
-                )
-            );
-            listaDipendenti.Add(
-                new Dipendenti(
-                    "Giacomo",
-                    "Poretti",
-                    "Via Roma 23, Milano",
-                    "PRTGCM71B12A748T",
-                    true,
-                    2,
-                    "muratore"
-                )
-            );
-            listaDipendenti.Add(
-                new Dipendenti(
-                    "Antonio",
-                    "Fuoco",
-                    "Via colombi 7, Genova",
-                    "FCUNTN99A26C713H",
-                    false,
-                    1,
-                    "capocantiere"
-                )
-            );
-            listaDipendenti.Add(
-                new Dipendenti(
-                    "Federico",
-                    "Ferri",
-                    "Via dei Gangoli 7, Gela",
-                    "FRRFDC78A212K",
-                    true,
-                    0,
-                    "autista"
-                )
-            );
+
+            string connString = ConfigurationManager
+                .ConnectionStrings["myConnection"]
+                .ConnectionString.ToString();
+            SqlConnection conn = new SqlConnection(connString);
+
+            try
+            {
+                conn.Open();
+                string query = "SELECT * FROM Dipendenti";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    listaDipendenti.Add(
+                        new Dipendenti(
+                            reader.GetString(1),
+                            reader.GetString(2),
+                            reader.GetString(3),
+                            reader.GetString(4),
+                            reader.GetBoolean(5),
+                            reader.GetInt32(6),
+                            reader.GetString(7)
+                        )
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.ToString());
+            }
+            finally
+            {
+                conn.Close();
+            }
 
             return View(listaDipendenti);
         }
@@ -70,8 +64,35 @@ namespace Settimana_17_Esercizio_1.Controllers
         [HttpPost]
         public ActionResult Create(Dipendenti d)
         {
-            Response.Write(d.Nome + " " + d.Cognome);
-            return View();
+            string connString = ConfigurationManager
+                .ConnectionStrings["myConnection"]
+                .ConnectionString.ToString();
+            SqlConnection conn = new SqlConnection(connString);
+
+            try
+            {
+                conn.Open();
+                string query =
+                    "INSERT INTO Dipendenti (Nome, Cognome, Indirizzo, CF, Coniugato, NFigli, Mansione) VALUES (@Nome, @Cognome, @Indirizzo, @CF, @Coniugato, @NFigli, @Mansione)";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Nome", d.Nome);
+                cmd.Parameters.AddWithValue("@Cognome", d.Cognome);
+                cmd.Parameters.AddWithValue("@Indirizzo", d.Indirizzo);
+                cmd.Parameters.AddWithValue("@CF", d.CF);
+                cmd.Parameters.AddWithValue("@Coniugato", d.Coniugato);
+                cmd.Parameters.AddWithValue("@NFigli", d.NFigli);
+                cmd.Parameters.AddWithValue("@Mansione", d.Mansione);
+                SqlDataReader reader = cmd.ExecuteReader();
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.ToString());
+            }
+            finally
+            {
+                conn.Close();
+            }
+            return RedirectToAction("Index");
         }
     }
 }
